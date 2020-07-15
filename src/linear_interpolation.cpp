@@ -26,17 +26,18 @@
 
 namespace cassie_common_toolbox {
 
-void linear_interp(VectorXd &X, MatrixXd &Y, double Xi, VectorXd &Yi ) {
-	// Find the lower bounding index in X
-	int Xj = 0;
+
+int find_index(VectorXd &X, double Xi) {
+    // Find the lower bounding index in X
+    int Xj = 0;
 
     // This function does not extrapolate, clamp and check for ends
     if (Xi <= X[0]) {
         Xi = X[0];
         Xj = 0;
     } else if (Xi >= X[X.size()-1]) {
-        Xi = X[X.size()-1];
-        Xj = X.size()-1;
+        Xi = X[X.size()-2];
+        Xj = X.size()-2;
     } else {
         for (int i=0; i<X.size()-2; i++ ) {
             if ( Xi >= X[i] && Xi <= X[i+1] ) {
@@ -44,10 +45,40 @@ void linear_interp(VectorXd &X, MatrixXd &Y, double Xi, VectorXd &Yi ) {
             }
         }
     }
+    return Xj;
+}
+
+void linear_interp(VectorXd &X, MatrixXd &Y, double Xi, VectorXd &Yi ) {
+    int Xj = 0;
+    Xj = find_index(X, Xi);
 
     // Interpolate
     double Sj = (Xi - X[Xj]) / (X[Xj+1] - X[Xj]);
     Yi = Y.row(Xj) * (1.0 - Sj) + Y.row(Xj+1) * Sj;
 }
+
+
+void bilinear_interp(VectorXd &X, VectorXd &Y, std::vector< std::vector<VectorXd> > Z, double Xi, double Yi, VectorXd &Zi ) {
+    // Find indices
+    int Xj = 0;
+    Xj = find_index(X, Xi);
+
+    int Yj = 0;
+    Yj = find_index(Y, Yi);
+
+    // X direction
+    double SXj = (Xi - X[Xj]) / (X[Xj+1] - X[Xj]);
+    double SYj = (Yi - Y[Yj]) / (Y[Yj+1] - Y[Yj]);
+
+    // Z_x_y1 = Z[Xj][Yj] * (1.0 - SXj) + Z[Xj+1][Yj] * SXj;
+    // Z_x_y2 = Z[Xj][Yj+1] * (1.0 - SXj) + Z[Xj+1][Yj+1] * SXj;
+    Zi = ( Z[Xj][Yj] * (1.0 - SXj) + Z[Xj+1][Yj] * SXj ) * (1.0 - SYj)
+            + ( Z[Xj][Yj+1] * (1.0 - SXj) + Z[Xj+1][Yj+1] * SXj ) * SYj;
+}
+
+
+
+
+
 
 } // namespace cassie_common_toolbox
