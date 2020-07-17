@@ -119,10 +119,14 @@ void get_proprioception_orientation(const cassie_common_toolbox::cassie_proprioc
     quat.z() = propmsg.orientation.z;
 
     Eigen::Matrix3d RateMatrix;
-    RateMatrix << 
-        1., sin(q(BaseRotX))*tan(q(BaseRotY)), cos(q(BaseRotX))*tan(q(BaseRotY)),
-        0, cos(q(BaseRotX)), -sin(q(BaseRotX)),
-        0, sin(q(BaseRotX))/cos(q(BaseRotY)), cos(q(BaseRotX))/cos(q(BaseRotY));
+    //RateMatrix <<
+    //    1., sin(q(BaseRotX))*tan(q(BaseRotY)), cos(q(BaseRotX))*tan(q(BaseRotY)),
+    //    0, cos(q(BaseRotX)), -sin(q(BaseRotX)),
+    //    0, sin(q(BaseRotX))/cos(q(BaseRotY)), cos(q(BaseRotX))/cos(q(BaseRotY));
+    RateMatrix <<
+        1.0/cos(q(BaseRotY)), 0.0, 0.0,
+        0,                    1.0, 0.0,
+        tan(q(BaseRotY)),     0.0, 1.0;
 
     dq(BaseRotX) = propmsg.angular_velocity.x;
     dq(BaseRotY) = propmsg.angular_velocity.y;
@@ -131,18 +135,18 @@ void get_proprioception_orientation(const cassie_common_toolbox::cassie_proprioc
 
     // Do euler angles - SUBTRACTING OUT THE YAW!!!
     Eigen::Matrix3d R = quat.toRotationMatrix();
-    Eigen::EulerAnglesZYXd euler = Eigen::EulerAnglesZYXd::FromRotation<false, false, false>(quat);
-    eulerZYX(quat, euler);
+    Eigen::EulerAnglesXYZd euler = Eigen::EulerAnglesXYZd::FromRotation<false, false, false>(quat);
+    eulerXYZ(quat, euler);
     Eigen::Matrix3d Rz;
-    Rz << cos(euler.alpha()), -sin(euler.alpha()), 0,
-          sin(euler.alpha()), cos(euler.alpha()), 0,
-          0,0,1;
+    Rz << cos(euler.gamma()), -sin(euler.gamma()), 0,
+          sin(euler.gamma()), cos(euler.gamma()),  0,
+          0,                  0,                   1;
     R = Rz.transpose() * R;
     Eigen::Quaterniond tempquat(R);
-    eulerZYX(tempquat, euler);
-    q(BaseRotX) = euler.gamma(); // roll
+    eulerXYZ(tempquat, euler);
+    q(BaseRotX) = euler.alpha(); // roll
     q(BaseRotY) = euler.beta();  // pitch
-    q(BaseRotZ) = euler.alpha(); // yaw
+    q(BaseRotZ) = euler.gamma(); // yaw
 
     // Linear velocity
     dq(BasePosX) = propmsg.linear_velocity.x;
@@ -162,18 +166,18 @@ void unpack_estimation(const cassie_common_toolbox::cassie_estimation_msg::Const
 
     // Do euler angles - SUBTRACTING OUT THE YAW!!!
     Eigen::Matrix3d R = quat.toRotationMatrix();
-    Eigen::EulerAnglesZYXd euler = Eigen::EulerAnglesZYXd::FromRotation<false, false, false>(quat);
-    eulerZYX(quat, euler);
+    Eigen::EulerAnglesXYZd euler = Eigen::EulerAnglesXYZd::FromRotation<false, false, false>(quat);
+    eulerXYZ(quat, euler);
     Eigen::Matrix3d Rz;
-    Rz << cos(euler.alpha()), -sin(euler.alpha()), 0,
-          sin(euler.alpha()), cos(euler.alpha()), 0,
-          0,0,1;
+    Rz << cos(euler.gamma()), -sin(euler.gamma()), 0,
+          sin(euler.gamma()), cos(euler.gamma()),  0,
+          0,                  0,                   1;
     R = Rz.transpose() * R;
     Eigen::Quaterniond tempquat(R);
-    eulerZYX(tempquat, euler);
-    q(BaseRotX) = euler.gamma(); // roll
+    eulerXYZ(tempquat, euler);
+    q(BaseRotX) = euler.alpha(); // roll
     q(BaseRotY) = euler.beta();  // pitch
-    q(BaseRotZ) = euler.alpha(); // yaw
+    q(BaseRotZ) = euler.gamma(); // yaw
 
     // Velocity is forward facing (remove yaw)
     dq(BasePosX) = estmsg->twist.linear.x;
