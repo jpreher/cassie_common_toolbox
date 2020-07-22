@@ -27,7 +27,7 @@
 namespace cassie_common_toolbox {
 
 
-int find_index(VectorXd &X, double Xi) {
+int find_index(VectorXd &X, double &Xi) {
     // Find the lower bounding index in X
     int Xj = 0;
 

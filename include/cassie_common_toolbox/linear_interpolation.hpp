@@ -13,7 +13,7 @@ using namespace Eigen;
 
 namespace cassie_common_toolbox {
 
-int find_index(VectorXd &X, double Xi);
+int find_index(VectorXd &X, double &Xi);
 
 void linear_interp(VectorXd &X, MatrixXd &Y, double Xi, VectorXd &Yi );
 
