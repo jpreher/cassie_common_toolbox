@@ -180,9 +180,9 @@ void unpack_estimation(const cassie_common_toolbox::cassie_estimation_msg::Const
     q(BaseRotZ) = euler.gamma(); // yaw
 
     // Velocity is forward facing (remove yaw)
-    dq(BasePosX) = estmsg->twist.linear.x;
-    dq(BasePosY) = estmsg->twist.linear.y;
-    dq(BasePosZ) = estmsg->twist.linear.z;
+    //dq(BasePosX) = estmsg->twist.linear.x;
+    //dq(BasePosY) = estmsg->twist.linear.y;
+    //dq(BasePosZ) = estmsg->twist.linear.z;
     //dq.block(BasePosX,0,3,1) = Rz.transpose() * dq.block(BasePosX,0,3,1);
 }
 
