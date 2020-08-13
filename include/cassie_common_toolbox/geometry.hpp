@@ -16,6 +16,8 @@ void eulerZYX(Eigen::Quaterniond &q, Eigen::EulerAnglesZYXd &euler);
 
 void eulerXYZ(Eigen::Quaterniond &q, Eigen::EulerAnglesXYZd &euler);
 
+void eulerXYZ(Eigen::Matrix3d &R, Eigen::EulerAnglesXYZd &euler);
+
 Eigen::Matrix3d skew(Eigen::Vector3d &v);
 
 
