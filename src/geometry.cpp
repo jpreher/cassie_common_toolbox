@@ -52,7 +52,7 @@ void eulerXYZ(Eigen::Quaterniond &q, Eigen::EulerAnglesXYZd &euler){
 
 void eulerXYZ(Eigen::Matrix3d &R, Eigen::EulerAnglesXYZd &euler){
     double y1, y2, x1, x2, z1, z2, x, y, z;
-    if ( abs(abs(R(2,0)) - 1.0) < 0.00001 ) {
+    if ( abs(abs(R(2,0)) - 1.0) > 0.00000001 ) {
         y1 = -asin(R(2,0));
         //y2 = 3.14159265359 - y1;
 
@@ -67,7 +67,7 @@ void eulerXYZ(Eigen::Matrix3d &R, Eigen::EulerAnglesXYZd &euler){
         euler.gamma() = z1;
     } else {
         z = 0.0;
-        if ( abs(R(2,0) + 1.0) < 0.00001 ) {
+        if ( abs(R(2,0) + 1.0) < 0.00000001 ) {
             y = 3.14159265359/2.0;
             x = z + atan2(R(0,1), R(0,2));
         } else {
