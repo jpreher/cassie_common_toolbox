@@ -38,6 +38,8 @@ int find_index(VectorXd &X, double &Xi) {
     } else if (Xi >= X[X.size()-1]) {
         Xi = X[X.size()-2];
         Xj = X.size()-3;
+    } else if (Xi >= X[X.size()-2]) {
+            Xj = X.size()-2;
     } else {
         for (int i=0; i<X.size()-2; i++ ) {
             if ( Xi >= X[i] && Xi <= X[i+1] ) {
