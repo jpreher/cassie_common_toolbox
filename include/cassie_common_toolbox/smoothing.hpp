@@ -30,6 +30,21 @@ private:
     Eigen::VectorXd a_; // filter coefficient
 };
 
+class MovingAverage
+{
+public:
+    MovingAverage();
+    MovingAverage(int nSamples, int dim);
+    void reset();
+    void reconfigure(int nSamples, int dim);
+    void update(Eigen::VectorXd &raw);
+    Eigen::VectorXd getValue();
+private:
+    int nSamples;
+    int cur_index;
+    Eigen::MatrixXd array;
+};
+
 }
 
 #endif // SMOOTHING_HPP

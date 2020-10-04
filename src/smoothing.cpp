@@ -87,4 +87,42 @@ double ButterFilter::getValue() {
 }
 
 
+
+MovingAverage::MovingAverage() {
+    // Create a window of one
+    this->nSamples = 1;
+    this->array.resize(1,this->nSamples);
+    this->reset();
+}
+    
+MovingAverage::MovingAverage(int nSamples, int dim) {
+    this->reconfigure(nSamples, dim);
+    this->reset();
+}
+
+void MovingAverage::reconfigure(int nSamples, int dim) {
+    this->nSamples = nSamples;
+    this->cur_index = 0;
+    this->array.resize(dim, this->nSamples);
+}
+
+void MovingAverage::reset() {
+    this->cur_index = 0;
+    this->array.setZero();
+}
+
+void MovingAverage::update(Eigen::VectorXd &raw) {
+    // This is naiive and DOES NOT check that raw is == dim in length
+    this->array.col(this->cur_index) << raw;
+    this->cur_index += 1;
+
+    // Buffer wraps
+    if (this->cur_index >= this->nSamples) 
+        this->cur_index = 0;
+}
+
+Eigen::VectorXd MovingAverage::getValue() {
+    return this->array.rowwise().mean();
+}
+
 }
